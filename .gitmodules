@@ -1,0 +1,9 @@
+[submodule "backend"]
+	path = backend
+	url = https://github.com/lucasbento/graphql-pokemon
+[submodule "backend/graphql-pokemon"]
+	path = backend/graphql-pokemon
+	url = https://github.com/lucasbento/graphql-pokemon
+[submodule "graphql-pokemon"]
+	path = graphql-pokemon
+	url = https://github.com/lucasbento/graphql-pokemon
