@@ -1,30 +1,23 @@
-import { ApolloQuery, customElement, html } from '@apollo-elements/lit-apollo'
-import { gql, ApolloClient, InMemoryCache } from '@apollo/client/core'
+import { ApolloQuery, html } from '@apollo-elements/lit-apollo'
 
-const client = new ApolloClient({
-    uri: 'http://localhost:5000',
-    cache: new InMemoryCache(),
-})
+import { gql } from '@apollo/client/core'
+
 class Pokemon extends ApolloQuery {
     constructor() {
         super()
-        this.id = '1'
+        this.counter = 1
         this.variables = {
-            id: btoa('Pokemon:' + String(this.id).padStart(3, '0')),
+            pokemon_id: this.formatPokemonId(this.counter),
         }
     }
     static get properties() {
         return {
-            id: { attribute: true, type: String },
+            counter: { attribute: true, type: Number },
         }
     }
-    variables = {
-        // id: btoa('Pokemon:' + String(this.id).padStart(3, '0')),
-        // id: 'Pokemon00' + this.getAttributeNames(),
-    }
     query = gql`
-        query GetPokemon($id: String) {
-            pokemon(id: $id) {
+        query GetPokemon($pokemon_id: String) {
+            pokemon(id: $pokemon_id) {
                 image
                 name
                 number
@@ -46,18 +39,55 @@ class Pokemon extends ApolloQuery {
         }
     `
 
+    formatPokemonId(id) {
+        return btoa('Pokemon:' + String(id).padStart(3, '0'))
+    }
+
     render() {
-        console.log(this.getAttribute('id'))
         const name = this.data?.pokemon?.name ?? 'oops!'
         const image = this.data?.pokemon?.image
         const numericId = this.data?.pokemon.number ?? 'no!'
-        console.log(this.data?.pokemon.attacks)
         return html`
-            <span id="hello"> ${name}</span>
-            <img src=${image} />
-            <span id="numeric id:"> ${numericId}</span>
-            <span id="attacks: "> ${this.data?.pokemon.resistant}</span>
+            <apollo-client uri="http://localhost:5000"></apollo-client>
+            <div>
+                <span id="name"> ${name}</span>
+                <img src=${image} />
+                <span id="numeric id:"> ${numericId}</span>
+                <span id="attacks: "> ${this.data?.pokemon.resistant}</span>
+            </div>
+            <div>
+                <style>
+                    button,
+                    p {
+                        display: inline-block;
+                    }
+                </style>
+                <button
+                    @click="${() => this.decrement()}"
+                    aria-label="decrement"
+                >
+                    -
+                </button>
+                <p>${this.variables.pokemon_id}</p>
+                <p>Counter: ${this.counter}</p>
+                <button
+                    @click="${() => this.increment()}"
+                    aria-label="increment"
+                >
+                    +
+                </button>
+            </div>
         `
+    }
+    decrement() {
+        this.counter--
+        this.variables = { pokemon_id: this.formatPokemonId(this.counter) }
+        // this._valueChanged()
+    }
+
+    increment() {
+        this.counter++
+        this.variables = { pokemon_id: this.formatPokemonId(this.counter) }
     }
 }
 customElements.define('poke-mon', Pokemon)

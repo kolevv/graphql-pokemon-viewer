@@ -1,13 +1,14 @@
-import logo from './../logo.svg'
 import '../styles/App.css'
 import './Pokemon'
+import '@apollo-elements/components/apollo-client'
 
 function App() {
     return (
         <div className="App">
             <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <poke-mon id="1"></poke-mon>
+                <apollo-client uri="http://localhost:5000">
+                    <poke-mon></poke-mon>
+                </apollo-client>
             </header>
         </div>
     )
