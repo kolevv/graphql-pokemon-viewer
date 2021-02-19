@@ -7,7 +7,7 @@ function App() {
         <div className="App">
             <header className="App-header">
                 <img src={logo} className="App-logo" alt="logo" />
-                <poke-mon></poke-mon>
+                <poke-mon id="1"></poke-mon>
             </header>
         </div>
     )
