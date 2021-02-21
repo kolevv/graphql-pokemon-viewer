@@ -16,12 +16,23 @@ class Pokemon extends ApolloQuery {
     static get styles() {
         return css`
             .pokemon-container {
-                max-width: 25em;
-                border: 1em solid red;
             }
-            img {
-                max-height: 15em;
-                min-height: 15em;
+            .flex-container {
+                display: flex;
+            }
+            .preview {
+                height: 500px;
+                width: 500px;
+                object-fit: fill;
+            }
+            .stats {
+                height: 500px;
+                padding: 0.5em;
+                white-space: nowrap;
+                overflow-x: hidden;
+                overflow-y: scroll;
+                display: block;
+                text-align: left;
             }
         `
     }
@@ -71,15 +82,35 @@ class Pokemon extends ApolloQuery {
     render() {
         const name = this.data?.pokemon?.name ?? 'oops!'
         const image = this.data?.pokemon?.image
-        const numericId = this.data?.pokemon.number ?? 'no!'
+        const numericId = this.data?.pokemon.number ?? 'error'
+        const resistances = this.data?.pokemon?.resistant ?? ['none']
+        const weaknesses = this.data?.pokemon?.weaknesses ?? ['none']
+
         return html`
-            <div className="pokemon-container">
-                <div><span id="name"> ${name}</span></div>
-                <img className="preview" src=${image} />
-                <div>
-                    <span id="resistances">
-                        ${this.data?.pokemon.resistant}</span
-                    >
+            <div class="pokemon-container">
+                <div><h3 id="name">${name}</h3></div>
+                <div class="flex-container">
+                    <div class="stats">
+                        <span>Fast:</span>
+                        <ul>
+                            ${resistances.map((item) => html`<li>${item}</li>`)}
+                        </ul>
+                        <span>Slow:</span>
+                        <ul>
+                            ${weaknesses.map((item) => html`<li>${item}</li>`)}
+                        </ul>
+                    </div>
+                    <img class="preview" src=${image} />
+                    <div class="stats">
+                        <span>Resistances:</span>
+                        <ul>
+                            ${resistances.map((item) => html`<li>${item}</li>`)}
+                        </ul>
+                        <span>Weaknesses:</span>
+                        <ul>
+                            ${weaknesses.map((item) => html`<li>${item}</li>`)}
+                        </ul>
+                    </div>
                 </div>
                 <div>
                     <style>
