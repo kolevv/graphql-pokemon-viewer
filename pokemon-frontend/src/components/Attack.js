@@ -23,7 +23,7 @@ export class Attack extends LitElement {
     }
 
     get atkBackground() {
-        this.style.getPropertyValue('--atkBackground')
+        return this.style.getPropertyValue('--atkBackground')
     }
 
     static get styles() {
@@ -55,7 +55,7 @@ export class Attack extends LitElement {
                     <b>${this.name}</b>
                     <span class="damage">${this.damage}</span>
                 </div>
-                <span class="type">${this.type}</span>
+                <div class="type">${this.type}</div>
             </div>
         `
     }
