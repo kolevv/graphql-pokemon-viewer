@@ -1,9 +1,9 @@
 import { ApolloQuery, html } from '@apollo-elements/lit-apollo'
 import { css } from 'lit-element'
-
 import { gql } from '@apollo/client/core'
+import './Attack'
 
-class Pokemon extends ApolloQuery {
+export class Pokemon extends ApolloQuery {
     constructor() {
         super()
         this.counter = 1
@@ -11,14 +11,18 @@ class Pokemon extends ApolloQuery {
         this.minId = 1
         this.variables = {
             pokemon_id: this.formatPokemonId(this.counter),
+            //TODO: Why doesn't this work when setting counter attribute in App.js?
         }
     }
     static get styles() {
+        //TODO: Media query to re-order images for smaller screens:
+        // https://www.webcomponents.org/element/lit-media-query
         return css`
             .pokemon-container {
             }
             .flex-container {
                 display: flex;
+                padding-bottom: 1em;
             }
             .preview {
                 height: 500px;
@@ -26,21 +30,27 @@ class Pokemon extends ApolloQuery {
                 object-fit: fill;
             }
             .stats {
-                height: 500px;
+                max-height: 500px;
                 padding: 0.5em;
                 white-space: nowrap;
                 overflow-x: hidden;
-                overflow-y: scroll;
+                overflow-y: auto;
                 display: block;
                 text-align: left;
+            }
+            .attacks {
+                display: flex;
+                border: 1px solid #6f7788;
+                max-width: 100%;
+                justify-content: space-evenly;
             }
         `
     }
 
     static get properties() {
         return {
-            maxId: { attribute: false, type: Number },
-            minId: { attribute: false, type: Number },
+            maxId: { attribute: true, type: Number },
+            minId: { attribute: true, type: Number },
             counter: { attribute: true, type: Number },
         }
     }
@@ -85,34 +95,52 @@ class Pokemon extends ApolloQuery {
         const numericId = this.data?.pokemon.number ?? 'error'
         const resistances = this.data?.pokemon?.resistant ?? ['none']
         const weaknesses = this.data?.pokemon?.weaknesses ?? ['none']
+        const fastAttacks = this.data?.pokemon?.attacks.fast ?? ['none']
+        const specialAttacks = this.data?.pokemon?.attacks.special ?? ['none']
 
         return html`
             <div class="pokemon-container">
                 <div><h3 id="name">${name}</h3></div>
                 <div class="flex-container">
                     <div class="stats">
-                        <span>Fast:</span>
-                        <ul>
-                            ${resistances.map((item) => html`<li>${item}</li>`)}
-                        </ul>
-                        <span>Slow:</span>
-                        <ul>
-                            ${weaknesses.map((item) => html`<li>${item}</li>`)}
-                        </ul>
-                    </div>
-                    <img class="preview" src=${image} />
-                    <div class="stats">
                         <span>Resistances:</span>
                         <ul>
                             ${resistances.map((item) => html`<li>${item}</li>`)}
                         </ul>
+                    </div>
+                    <img class="preview" src=${image} />
+                    <div class="stats">
                         <span>Weaknesses:</span>
                         <ul>
                             ${weaknesses.map((item) => html`<li>${item}</li>`)}
                         </ul>
                     </div>
                 </div>
+                <div class="attacks">
                 <div>
+                Fast Attacks
+                ${fastAttacks.map(
+                    (item) =>
+                        html`<pokemon-attack
+                            name=${item.name}
+                            type=${item.type}
+                            damage=${item.damage}
+                        ></pokemon-attack>`
+                )}
+                </div>
+                <div>
+                Special Attacks
+                ${specialAttacks.map(
+                    (item) =>
+                        html`<pokemon-attack
+                            name=${item.name}
+                            type=${item.type}
+                            damage=${item.damage}
+                        >
+                        </pokemon-attack>`
+                )}
+                </div>
+                </div>
                     <style>
                         button,
                         p {
